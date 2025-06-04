@@ -8,29 +8,22 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 # Desactiva clones superficiales para mejorar los informes de SonarQube
-    - name: Set up Node.js
+    - name: Clonar código
+      uses: actions/checkout@v3
+    - name: Configurar Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '14'
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-    - name: Install dependencies
+    - name: Instalar dependencias
       run: npm install
-    - name: Run tests
+    - name: Ejecutar pruebas
       run: npm test
-    - name: Build Docker image
+    - name: Construir imagen de Docker
       run: docker build -t jorgevalentefragoso/node-app:latest .
-    - name: Log in to Docker Hub
+    - name: Iniciar sesión en Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Push Docker image
+    - name: Enviar imagen de Docker
       run: docker push jorgevalentefragoso/node-app:latest
